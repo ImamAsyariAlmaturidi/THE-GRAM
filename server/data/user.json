@@ -1,0 +1,17 @@
+[
+  {
+    "username": "alice",
+    "createdAt": "2024-08-14T00:00:00.000Z",
+    "updatedAt": "2024-08-14T00:00:00.000Z"
+  },
+  {
+    "username": "bob",
+    "createdAt": "2024-08-14T00:00:00.000Z",
+    "updatedAt": "2024-08-14T00:00:00.000Z"
+  },
+  {
+    "username": "charlie",
+    "createdAt": "2024-08-14T00:00:00.000Z",
+    "updatedAt": "2024-08-14T00:00:00.000Z"
+  }
+]

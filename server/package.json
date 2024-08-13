@@ -1,0 +1,19 @@
+{
+  "name": "server",
+  "module": "index.ts",
+  "type": "commonjs",
+  "devDependencies": {
+    "@types/bun": "latest",
+    "nodemon": "^3.1.4",
+    "sequelize-cli": "^6.6.2"
+  },
+  "peerDependencies": {
+    "typescript": "^5.0.0"
+  },
+  "dependencies": {
+    "cors": "^2.8.5",
+    "express": "^4.19.2",
+    "pg": "^8.12.0",
+    "sequelize": "^6.37.3"
+  }
+}
