@@ -1,16 +1,32 @@
 import axios from "axios";
-import React, { useEffect, useState } from "react";
-
+import React, { useEffect, useState, useContext } from "react";
+import { useNavigate } from "react-router-dom";
+import { SocketContext } from "../context/socketContext";
 const SideBar = () => {
+  const navigate = useNavigate();
   const [rooms, setRooms] = useState([]);
 
+  const { socket } = useContext(SocketContext);
   async function getRooms() {
     try {
       const { data } = await axios.get("http://localhost:3000/allrooms");
       setRooms(data);
-      console.log(data);
     } catch (error) {
       console.error("Failed to fetch rooms", error);
+    }
+  }
+
+  async function joinChat(e, id) {
+    e.preventDefault();
+    try {
+      await axios.post(
+        `http://localhost:3000/joinroom/${id}?username=${localStorage.username}`
+      );
+
+      socket.emit("joinRoom", { username: localStorage.username, roomId: id });
+      navigate(`/chat/${id}`);
+    } catch (error) {
+      console.log(error);
     }
   }
 
@@ -27,12 +43,10 @@ const SideBar = () => {
             return (
               <li
                 key={room.id}
+                onClick={(e) => joinChat(e, room.id)}
                 className="bg-gray-700 rounded-lg border border-gray-600 hover:bg-gray-600"
               >
-                <a
-                  href="#"
-                  className="flex items-center p-4 text-white hover:bg-gray-600 rounded-lg transition-colors"
-                >
+                <a className="flex items-center p-4 text-white hover:bg-gray-600 rounded-lg transition-colors">
                   <span className="flex-1 truncate">{room.name}</span>
                 </a>
                 <div className="p-2 text-gray-400 text-sm flex">

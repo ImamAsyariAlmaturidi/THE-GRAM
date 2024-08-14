@@ -13,15 +13,20 @@ const app = express();
 const port = 3000;
 
 const server = http.createServer(app);
-const io = socketIo(server);
+const io = socketIo(server, {
+  cors: {
+    origin: "http://localhost:5173",
+    methods: ["GET", "POST"],
+  },
+});
 
+app.set("io", io);
 app.use(cors());
 app.use(express.json());
 app.use(express.urlencoded({ extended: false }));
 
 app.post("/login", UserController.createOrLogin);
 app.post("/rooms", RoomController.createRoom);
-
 app.get("/allrooms", RoomController.findAllRoom);
 app.post("/joinroom/:roomId", UserRoomController.joinroom);
 app.get("/message/:roomId", MessageController.findAllMessageRoom);
