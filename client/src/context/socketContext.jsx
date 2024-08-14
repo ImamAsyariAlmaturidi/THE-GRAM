@@ -1,32 +1,30 @@
-// src/context/SocketContext.jsx
-import React, { createContext, useContext, useEffect, useState } from "react";
-import io from "socket.io-client";
+import { createContext, useEffect, useState } from "react";
+import { io } from "socket.io-client";
 
-const SERVER_URL = "http://localhost:3000";
-
-export const SocketContext = createContext();
+export const SocketContext = createContext(undefined);
 
 export const SocketProvider = ({ children }) => {
-  const [socket, setSocket] = useState(null);
+  const [socketState, setSocketState] = useState(undefined);
 
   useEffect(() => {
-    const socketInstance = io(SERVER_URL, {
-      transports: ["websocket"],
+    const socketInitializer = io("http://localhost:3000");
+
+    socketInitializer.on("connection", () => {
+      console.log(socketInitializer.id);
     });
 
-    socketInstance.on("connect", () => {
-      console.log("Connected to server");
-    });
-
-    setSocket(socketInstance);
+    setSocketState(socketInitializer);
 
     return () => {
-      socketInstance.disconnect();
+      if (socketInitializer) {
+        socketInitializer.disconnect();
+      }
     };
   }, []);
 
   return (
-    <SocketContext.Provider value={{ socket }}>
+    // ! Aturannya: Lempar value yang dibutuhkan saja
+    <SocketContext.Provider value={{ socketState }}>
       {children}
     </SocketContext.Provider>
   );

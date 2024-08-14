@@ -6,7 +6,7 @@ const SideBar = () => {
   const navigate = useNavigate();
   const [rooms, setRooms] = useState([]);
 
-  const { socket } = useContext(SocketContext);
+  const { socketState } = useContext(SocketContext);
   async function getRooms() {
     try {
       const { data } = await axios.get("http://localhost:3000/allrooms");
@@ -19,11 +19,10 @@ const SideBar = () => {
   async function joinChat(e, id) {
     e.preventDefault();
     try {
-      await axios.post(
+      const response = await axios.post(
         `http://localhost:3000/joinroom/${id}?username=${localStorage.username}`
       );
-
-      socket.emit("joinRoom", { username: localStorage.username, roomId: id });
+      console.log(response);
       navigate(`/chat/${id}`);
     } catch (error) {
       console.log(error);
@@ -51,7 +50,7 @@ const SideBar = () => {
                 </a>
                 <div className="p-2 text-gray-400 text-sm flex">
                   <div className="p-2 text-gray-500 text-xs italic ">
-                    {latestMessage ? latestMessage.User.username : "Unknown"}
+                    Unknown
                   </div>
                   <p className="text-xs mt-2 truncate">
                     {latestMessage ? latestMessage.message : "No messages"}

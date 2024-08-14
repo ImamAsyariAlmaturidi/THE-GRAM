@@ -15,16 +15,15 @@ const port = 3000;
 const server = http.createServer(app);
 const io = socketIo(server, {
   cors: {
-    origin: "http://localhost:5173",
-    methods: ["GET", "POST"],
+    origin: "*",
   },
 });
 
-app.set("io", io);
 app.use(cors());
 app.use(express.json());
 app.use(express.urlencoded({ extended: false }));
 
+// Route handlers
 app.post("/login", UserController.createOrLogin);
 app.post("/rooms", RoomController.createRoom);
 app.get("/allrooms", RoomController.findAllRoom);
@@ -33,20 +32,32 @@ app.get("/message/:roomId", MessageController.findAllMessageRoom);
 app.post("/message/:roomId", MessageController.createMessage);
 
 io.on("connection", (socket) => {
-  console.log("A user connected");
+  console.log(`User ${socket.id} is connected`);
 
-  socket.on("joinRoom", ({ roomId, username }) => {
+  socket.on("joinRoom", (roomId) => {
     socket.join(roomId);
-    console.log(`${username} joined room ${roomId}`);
-    socket.to(roomId).emit("message", `${username} has joined the room.`);
+    console.log(`User ${socket.id} joined room ${roomId}`);
   });
 
-  socket.on("sendMessage", ({ roomId, username, message }) => {
-    io.to(roomId).emit("message", { username, message });
+  socket.on("sendMessage", ({ message, roomId, username }) => {
+    const newMessage = { message, roomId, username };
+
+    io.to(roomId).emit("message", newMessage);
   });
 
-  socket.on("disconnect", () => {
-    console.log("A user disconnected");
+  socket.on("callUser", (data) => {
+    io.to(data.userToCall).emit("incomingCall", {
+      signal: data.signalData,
+      from: data.from,
+    });
+  });
+
+  socket.on("answerCall", (data) => {
+    io.to(data.to).emit("callAccepted", data.signal);
+  });
+
+  socket.on("disconnect", (reason) => {
+    console.log(`User ${socket.id} disconnected - reason: ${reason}`);
   });
 });
 

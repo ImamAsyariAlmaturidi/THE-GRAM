@@ -1,19 +1,22 @@
-const { Message, User } = require("../models");
+const { Message, Room, User, UserRoom } = require("../models");
+
 class Controller {
   static async findAllMessageRoom(req, res) {
     const { roomId } = req.params;
     try {
-      const message = await Message.findAll({
-        include: User,
+      const messages = await Message.findAll({
+        include: {
+          model: User,
+        },
         where: {
           RoomId: roomId,
         },
         order: [["createdAt", "ASC"]],
       });
-      res.status(200).json(message);
+      res.status(200).json(messages);
     } catch (error) {
       console.log(error);
-      res.send(error);
+      res.status(500).json({ message: "Internal Server Error" });
     }
   }
 
@@ -24,21 +27,25 @@ class Controller {
 
     try {
       const user = await User.findOne({
-        where: {
-          username,
-        },
+        where: { username },
       });
+
+      if (!user) {
+        return res.status(404).json({ message: "User not found" });
+      }
+
       const newMessage = await Message.create({
         message,
         RoomId: roomId,
         UserId: user.id,
       });
 
-      req.app.get("io").to(roomId).emit("message", newMessage);
       res.status(201).json(newMessage);
     } catch (error) {
       console.log(error);
+      res.status(500).json({ message: "Internal Server Error" });
     }
   }
 }
+
 module.exports = Controller;

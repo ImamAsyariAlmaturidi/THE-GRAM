@@ -1,74 +1,98 @@
-// src/components/Chat.jsx
 import React, { useContext, useEffect, useState } from "react";
 import { useParams } from "react-router-dom";
-import { SocketContext } from "../context/socketContext"; // Pastikan nama ini sesuai dengan ekspor
+import { SocketContext } from "../context/socketContext";
 import axios from "axios";
 
 const Chat = () => {
   const [messages, setMessages] = useState([]);
   const [message, setMessage] = useState("");
   const { roomId } = useParams();
+  const { socketState } = useContext(SocketContext);
 
-  const { socket } = useContext(SocketContext);
+  const sendMessage = async (e) => {
+    e.preventDefault();
+    try {
+      const newMessage = {
+        message,
+        roomId,
+        User: { username: "Anonymous" },
+      };
+
+      socketState?.emit("sendMessage", newMessage);
+
+      setMessages((prevMessages) => [...prevMessages, newMessage]);
+      await axios.post(
+        `http://localhost:3000/message/${roomId}?username=${localStorage.username}`,
+        {
+          message,
+        }
+      );
+
+      setMessage("");
+    } catch (error) {
+      console.log(error);
+    }
+  };
+
   useEffect(() => {
-    const fetchMessages = async () => {
+    const getAllMessages = async () => {
       try {
         const { data } = await axios.get(
           `http://localhost:3000/message/${roomId}`
         );
-        setMessages(data);
+
+        const anonymousMessages = data.map((msg) => ({
+          ...msg,
+          User: { username: "Anonymous" },
+          createdAt: undefined,
+        }));
+
+        setMessages(anonymousMessages);
       } catch (error) {
-        console.error("Error fetching messages:", error);
+        console.log(error);
       }
     };
 
-    fetchMessages();
+    getAllMessages();
 
-    if (socket) {
-      socket.on("message", (newMessage) => {
-        setMessages((prevMessages) => [...prevMessages, newMessage]);
-      });
+    socketState?.emit("joinRoom", roomId);
 
-      return () => {
-        socket.off("message");
-      };
-    }
-  }, [socket, roomId]);
+    socketState?.on("message", (newMessage) => {
+      const formattedMessage = Array.isArray(newMessage)
+        ? newMessage.map((msg) => ({
+            ...msg,
+            User: { username: "Anonymous" },
+            createdAt: undefined,
+          }))
+        : {
+            ...newMessage,
+            User: { username: "Anonymous" },
+            createdAt: undefined,
+          };
 
-  const handleSendMessage = async (e) => {
-    e.preventDefault();
-    await axios.post(
-      `http://localhost:3000/message/${roomId}?username=${localStorage.username}`,
-      { message }
-    );
-    if (socket) {
-      const messageData = {
-        roomId,
-        username: localStorage.getItem("username"),
-        message,
-      };
-      socket.emit("sendMessage", messageData);
-      setMessages((prevMessages) => [...prevMessages, messageData]);
-      setMessage("");
-    } else {
-      console.error("Socket is not initialized");
-    }
-  };
+      setMessages((prevMessages) => [...prevMessages, formattedMessage]);
+      console.log(formattedMessage);
+    });
+
+    return () => {
+      socketState?.off("message");
+    };
+  }, [roomId, socketState]);
 
   return (
     <div className="flex flex-col p-4 max-h-[80vh] overflow-y-auto border border-gray-200 rounded-lg bg-gray-50">
       <div className="flex-1">
-        {messages?.map((msg, index) => (
+        {messages?.map((msg) => (
           <div
             className="flex flex-col mb-4 pb-2 border-b border-gray-200"
-            key={index}
+            key={msg.id}
           >
-            <span className="font-semibold text-gray-800">{msg.username}</span>
+            <span className="font-semibold text-gray-800">Anonymous</span>
             <div className="text-gray-600">{msg.message}</div>
           </div>
         ))}
       </div>
-      <form className="flex mt-4" onSubmit={handleSendMessage}>
+      <form className="flex mt-4" onSubmit={sendMessage}>
         <input
           type="text"
           className="flex-1 p-2 border border-gray-300 rounded-l-lg"
