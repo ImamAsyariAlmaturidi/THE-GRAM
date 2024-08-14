@@ -1,11 +1,23 @@
 const { User } = require("../models");
 class Controller {
-  static async createUser(req, res) {
+  static async createOrLogin(req, res) {
     const { username } = req.body;
     try {
-      const user = await User.createOrLogin;
+      const [user, created] = await User.findOrCreate({
+        where: { username },
+        defaults: {
+          username,
+        },
+        hooks: false,
+      });
+
+      res.status(201).json({
+        user,
+      });
     } catch (error) {
       res.send(error);
     }
   }
 }
+
+module.exports = Controller;

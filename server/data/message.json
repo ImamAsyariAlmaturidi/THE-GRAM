@@ -15,7 +15,7 @@
   },
   {
     "UserId": 2,
-    "RoomId": 3,
+    "RoomId": 1,
     "message": "Let's discuss the new feature.",
     "createdAt": "2024-08-14T00:00:00.000Z",
     "updatedAt": "2024-08-14T00:00:00.000Z"
