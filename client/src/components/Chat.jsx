@@ -2,7 +2,7 @@ import React, { useContext, useEffect, useState } from "react";
 import { useParams } from "react-router-dom";
 import { SocketContext } from "../context/socketContext";
 import axios from "axios";
-
+import Call from "./Call";
 const Chat = () => {
   const [messages, setMessages] = useState([]);
   const [message, setMessage] = useState("");
@@ -55,7 +55,7 @@ const Chat = () => {
 
     getAllMessages();
 
-    socketState?.emit("joinRoom", roomId);
+    socketState?.emit("join-room", { username: localStorage.username, roomId });
 
     socketState?.on("message", (newMessage) => {
       const formattedMessage = Array.isArray(newMessage)
@@ -81,8 +81,9 @@ const Chat = () => {
 
   return (
     <div className="flex flex-col p-4 max-h-[80vh] overflow-y-auto border border-gray-200 rounded-lg bg-gray-50">
-      <div className="flex-1">
-        {messages?.map((msg) => (
+      <Call />
+      {messages?.map((msg) => (
+        <div className="flex-1" key={msg.id}>
           <div
             className="flex flex-col mb-4 pb-2 border-b border-gray-200"
             key={msg.id}
@@ -90,8 +91,8 @@ const Chat = () => {
             <span className="font-semibold text-gray-800">Anonymous</span>
             <div className="text-gray-600">{msg.message}</div>
           </div>
-        ))}
-      </div>
+        </div>
+      ))}
       <form className="flex mt-4" onSubmit={sendMessage}>
         <input
           type="text"

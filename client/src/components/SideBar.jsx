@@ -2,11 +2,10 @@ import axios from "axios";
 import React, { useEffect, useState, useContext } from "react";
 import { useNavigate } from "react-router-dom";
 import { SocketContext } from "../context/socketContext";
+
 const SideBar = () => {
   const navigate = useNavigate();
   const [rooms, setRooms] = useState([]);
-
-  const { socketState } = useContext(SocketContext);
   async function getRooms() {
     try {
       const { data } = await axios.get("http://localhost:3000/allrooms");
