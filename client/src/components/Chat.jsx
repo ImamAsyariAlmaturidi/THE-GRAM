@@ -87,9 +87,6 @@ const Chat = () => {
 
   return (
     <div className="flex h-screen bg-gray-50">
-      <div className="flex-shrink-0 w-1/4 bg-gray-200 p-4">
-        <SideBar />
-      </div>
       <div className="flex-shrink-0 w-2/4 bg-gray-200 p-4">
         <Call />
       </div>

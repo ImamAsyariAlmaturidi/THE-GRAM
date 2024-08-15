@@ -1,8 +1,11 @@
 import { useEffect, useRef, useState } from "react";
 import Peer from "peerjs";
 import { MdVideocam, MdVideocamOff, MdMic, MdMicOff } from "react-icons/md";
+import axios from "axios";
+import { useNavigate } from "react-router-dom";
 
 function Call() {
+  const navigate = useNavigate();
   const [peerId, setPeerId] = useState("");
   const [remotePeerIdValue, setRemotePeerIdValue] = useState("");
   const [cameraEnabled, setCameraEnabled] = useState(true);
@@ -12,7 +15,24 @@ function Call() {
   const peerInstance = useRef(null);
   const localStreamRef = useRef(null);
 
+  const [room, setRoom] = useState([]);
+
+  function handleChangeRoom(e, id) {
+    e.preventDefault();
+    navigate(`/chat/${id}`);
+  }
+
   useEffect(() => {
+    async function getRoom() {
+      try {
+        const { data } = await axios.get("http://localhost:3000/allrooms");
+        setRoom(data);
+      } catch (error) {
+        console.log(error);
+      }
+    }
+
+    getRoom();
     const peer = new Peer();
 
     peer.on("open", (id) => {
@@ -131,7 +151,7 @@ function Call() {
       <div className="relative w-full max-w-3xl h-80">
         <video
           ref={remoteVideoRef}
-          className="w-full h-full  -ml-9 object-cover border-2 border-gray-300 rounded bg-black"
+          className="w-full h-full  object-cover border-2 border-gray-300 rounded bg-black"
           autoPlay
         />
         <video
@@ -140,6 +160,23 @@ function Call() {
           autoPlay
           muted
         />
+      </div>
+      <div className="text-md my-6">CHANGE ROOM?</div>
+      <div className="grid grid-cols-2">
+        {room.map((item) => {
+          return (
+            <>
+              <button
+                key={item.id}
+                onClick={(e) => handleChangeRoom(e, item.id)}
+              >
+                <h1 className=" text-black font-mono font-extrabold tracking-wide">
+                  {item.name}
+                </h1>
+              </button>
+            </>
+          );
+        })}
       </div>
     </div>
   );
