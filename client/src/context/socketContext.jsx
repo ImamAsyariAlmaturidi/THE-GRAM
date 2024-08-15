@@ -7,7 +7,7 @@ export const SocketProvider = ({ children }) => {
   const [socketState, setSocketState] = useState(undefined);
 
   useEffect(() => {
-    const socketInitializer = io("http://localhost:3000");
+    const socketInitializer = io("https://gram.imam-asyari.online");
 
     socketInitializer.on("connection", () => {
       console.log(socketInitializer.id);
@@ -28,4 +28,14 @@ export const SocketProvider = ({ children }) => {
       {children}
     </SocketContext.Provider>
   );
+};
+
+import React, { createContext, useMemo, useContext } from "react";
+import { io } from "socket.io-client";
+
+const SocketContext = createContext(null);
+
+export const useSocket = () => {
+  const socket = useContext(SocketContext);
+  return socket;
 };
