@@ -2,11 +2,15 @@ import React, { useState, useEffect, useRef } from "react";
 import SideBar from "../components/SideBar";
 function Home() {
   return (
-    <div className="flex flex-col h-screen bg-black">
-      <div className="main-container">
-        <div className="text-center text-3xl ml-80 tracking-widest flex justify-center text-white items-center h-[100vh] bg-black">
-          SELECT CHAT TO JOIN
-        </div>
+    <div className="w-screen h-screen flex flex-col justify-center gap-4 items-center bg-neutral-900">
+      <div
+        className="h-5/6 w-1/3"
+        style={{ background: "url('../src/assets/robot.gif')" }}
+      ></div>
+      <div>
+        <h1 className="pl-20 text-white text-2xl">
+          Please select a chat to Start messaging.
+        </h1>
       </div>
       <SideBar />
     </div>
