@@ -78,7 +78,6 @@ const Chat = () => {
 
     return () => {
       socketState?.off("message");
-      socketState?.disconnect();
     };
   }, [roomId, socketState]);
 
