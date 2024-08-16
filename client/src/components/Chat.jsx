@@ -78,6 +78,7 @@ const Chat = () => {
 
     return () => {
       socketState?.off("message");
+      socketState?.disconnect();
     };
   }, [roomId, socketState]);
 
@@ -86,20 +87,24 @@ const Chat = () => {
   }, [messages]);
 
   return (
-    <div className="flex h-screen bg-gray-50">
-      <div className="flex-shrink-0 w-2/4 bg-gray-200 p-4">
+    <div className="flex flex-col md:flex-row h-screen bg-gray-50">
+      <div className="md:flex-shrink-0 md:w-2/5 lg:w-1/3 bg-gray-200 p-4">
         <Call />
       </div>
 
-      <div className="flex-1 flex flex-col  py-10">
-        <div className="flex-shrink-0 text-black p-2 text-center font-semibold">
+      <div className="flex-1 flex flex-col py-4 md:py-10">
+        <div className="flex-shrink-0 text-black p-2 text-center font-semibold bg-blue-100 rounded-t-lg shadow">
           Anonymous Chat
         </div>
         <div className="flex-1 overflow-auto p-2 bg-white rounded-t-lg shadow-md border-t border-gray-200">
-          <div className="max-h-[calc(100vh-200px)] overflow-y-auto">
+          <div className="max-h-[calc(100vh-250px)] overflow-y-auto space-y-3 p-3">
             {messages?.map((msg) => (
               <div
-                className="flex flex-col mb-2 pb-2 border-b border-gray-200"
+                className={`flex flex-col mb-2 pb-2 rounded-lg ${
+                  msg.User.username === "You"
+                    ? "bg-blue-50 self-end"
+                    : "bg-gray-100"
+                } p-3 shadow`}
                 key={msg.id}
               >
                 <span className="font-semibold text-gray-800">
@@ -117,14 +122,14 @@ const Chat = () => {
         >
           <input
             type="text"
-            className="flex-1 p-2 border border-gray-300 rounded-l-lg"
+            className="flex-1 p-3 border border-gray-300 rounded-l-lg focus:outline-none focus:ring-2 focus:ring-blue-400"
             value={message}
             onChange={(e) => setMessage(e.target.value)}
             placeholder="Type a message"
           />
           <button
             type="submit"
-            className="p-2 bg-blue-500 text-white rounded-r-lg"
+            className="p-3 bg-blue-500 text-white rounded-r-lg hover:bg-blue-600 transition duration-200"
           >
             Send
           </button>
