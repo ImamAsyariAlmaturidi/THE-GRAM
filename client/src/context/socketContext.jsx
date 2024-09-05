@@ -7,7 +7,7 @@ export const SocketProvider = ({ children }) => {
   const [socketState, setSocketState] = useState(undefined);
 
   useEffect(() => {
-    const socketInitializer = io("https://gram.imam-asyari.online");
+    const socketInitializer = io("http://localhost:3000/");
 
     socketInitializer.on("connection", () => {
       console.log(socketInitializer.id);

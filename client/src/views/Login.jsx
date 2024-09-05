@@ -9,12 +9,9 @@ const Login = () => {
   const handleLogin = async (e) => {
     e.preventDefault();
     try {
-      const { data } = await axios.post(
-        "https://gram.imam-asyari.online/login",
-        {
-          username,
-        }
-      );
+      const { data } = await axios.post("http://localhost:3000/login", {
+        username,
+      });
       localStorage.setItem("username", data.user.username);
       navigate("/");
     } catch (err) {

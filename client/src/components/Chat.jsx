@@ -25,7 +25,7 @@ const Chat = () => {
 
       setMessages((prevMessages) => [...prevMessages, newMessage]);
       await axios.post(
-        `https://gram.imam-asyari.online/message/${roomId}?username=${localStorage.username}`,
+        `http://localhost:3000/message/${roomId}?username=${localStorage.username}`,
         {
           message,
         }
@@ -41,7 +41,7 @@ const Chat = () => {
     const getAllMessages = async () => {
       try {
         const { data } = await axios.get(
-          `https://gram.imam-asyari.online/message/${roomId}`
+          `http://localhost:3000/message/${roomId}`
         );
 
         const anonymousMessages = data.map((msg) => ({

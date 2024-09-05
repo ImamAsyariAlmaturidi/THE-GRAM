@@ -9,9 +9,7 @@ const SideBar = () => {
 
   async function getRooms() {
     try {
-      const { data } = await axios.get(
-        "https://gram.imam-asyari.online/allrooms"
-      );
+      const { data } = await axios.get("http://localhost:3000/allrooms");
       setRooms(data);
     } catch (error) {
       console.error("Failed to fetch rooms", error);
@@ -22,7 +20,7 @@ const SideBar = () => {
     e.preventDefault();
     try {
       const response = await axios.post(
-        `https://gram.imam-asyari.online/joinroom/${id}?username=${localStorage.username}`
+        `http://localhost:3000/joinroom/${id}?username=${localStorage.username}`
       );
       console.log(response);
       navigate(`/chat/${id}`);

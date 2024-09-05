@@ -25,9 +25,7 @@ function Call() {
   useEffect(() => {
     async function getRoom() {
       try {
-        const { data } = await axios.get(
-          "https://gram.imam-asyari.online/allrooms"
-        );
+        const { data } = await axios.get("http://localhost:3000/allrooms");
         setRoom(data);
       } catch (error) {
         console.log(error);
